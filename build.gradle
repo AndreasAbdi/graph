@@ -1,0 +1,36 @@
+group 'andreas'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'groovy'
+apply plugin: 'java'
+apply plugin: 'application'
+mainClassName = 'graph.Graph'
+sourceCompatibility = 1.5
+
+def neo4jVersion = "2.3.2"
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ["src/main/java"]
+        }
+    }
+    test {
+        java {
+            srcDirs = ["test/main/java"]
+        }
+    }
+}
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.codehaus.groovy:groovy-all:2.3.11'
+    compile group: "org.neo4j", name: "neo4j", version: "${neo4jVersion}"
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.3'
+}
