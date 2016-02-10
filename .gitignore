@@ -1,5 +1,12 @@
-.gradle
+#git
+.git/
+
+#intellij
+.idea/
+#gradle
 build/
+.gradle/
+.gradle
 
 # Ignore Gradle GUI config
 gradle-app.setting
