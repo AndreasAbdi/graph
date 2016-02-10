@@ -1,4 +1,4 @@
-package main.java.graph;
+package graph;
 
 import org.junit.Test;
 
