@@ -8,6 +8,7 @@ mainClassName = 'graph.Graph'
 sourceCompatibility = 1.8
 
 def neo4jVersion = "2.3.2"
+def commonsIoVersion = "2.4"
 
 sourceSets {
     main {
@@ -28,6 +29,8 @@ repositories {
 dependencies {
     compile 'org.codehaus.groovy:groovy-all:2.3.11'
     compile group: "org.neo4j", name: "neo4j", version: "${neo4jVersion}"
+    compile group: "com.fasterxml.jackson.core", name: "jackson-databind", version: "2.7.1"
+    compile group: "commons-io", name: "commons-io", version: "${commonsIoVersion}"
     testCompile group: 'junit', name: 'junit', version: '4.11'
 }
 

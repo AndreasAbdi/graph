@@ -1,11 +1,19 @@
 package graph;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.IOUtils;
 import org.neo4j.cypher.ExecutionEngine;
 import org.neo4j.cypher.ExecutionResult;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+
+import static java.util.Collections.singletonMap;
 
 public class Graph {
 
@@ -18,19 +26,53 @@ public class Graph {
     }
 
 
-    public static void main (String[] args) {
+    public static void main (String[] args) throws Exception {
         Graph graph = new Graph();
-        InputStream jsonData= graph.getJsonData();
+        String jsonData= graph.getJsonData();
         graph.parseJsonData(jsonData);
     }
 
-    private void parseJsonData(InputStream jsonData) {
-        //TODO
+    private void parseJsonData(String jsonData) throws IOException {
+        Map jsonMap = convertJsonDataToMap(jsonData);
+        executeDatabaseQuery(jsonMap);
+
     }
 
-    private InputStream getJsonData() {
-        //TODO
-        return null;
+
+    private Map convertJsonDataToMap(String jsonData) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map jsonMap = mapper.readValue(jsonData, Map.class);
+
+        return jsonMap;
+    }
+
+
+    private String getJsonData() throws IOException {
+        ClassLoader classLoader = getClass().getClassLoader();
+        return IOUtils.toString(classLoader.getResourceAsStream("json.data"));
+
+    }
+
+    private void executeDatabaseQuery(Map jsonMap) {
+        File graphDbLocation = new File("/Users/AndreasAbdi/Documents/Neo4j/graph.graphdb");
+        GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(graphDbLocation);
+
+        String query = "WITH {json} as data\n" +
+                "UNWIND data.items as q\n" +
+                "MERGE (question:Question {id:q.question_id}) ON CREATE\n" +
+                "  SET question.title = q.title, question.share_link = q.share_link, question.favorite_count = q.favorite_count\n" +
+                "\n" +
+                "MERGE (owner:User {id:q.owner.user_id}) ON CREATE SET owner.display_name = q.owner.display_name\n" +
+                "MERGE (owner)-[:ASKED]->(question)\n" +
+                "\n" +
+                "FOREACH (tagName IN q.tags | MERGE (tag:Tag {name:tagName}) MERGE (question)-[:TAGGED]->(tag))\n" +
+                "FOREACH (a IN q.answers |\n" +
+                "   MERGE (question)<-[:ANSWERS]-(answer:Answer {id:a.answer_id})\n" +
+                "   MERGE (answerer:User {id:a.owner.user_id}) ON CREATE SET answerer.display_name = a.owner.display_name\n" +
+                "   MERGE (answer)<-[:PROVIDED]-(answerer)\n" +
+                ")";
+        graphDb.execute(query, singletonMap("json", jsonMap));
+        graphDb.shutdown();
     }
 
     private void doGraphStuff() {
