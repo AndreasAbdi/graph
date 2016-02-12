@@ -5,6 +5,8 @@ import org.neo4j.cypher.ExecutionResult;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
+import java.io.InputStream;
+
 public class Graph {
 
     public enum NodeType implements Label {
@@ -15,7 +17,23 @@ public class Graph {
         Knows, BelongsTo;
     }
 
+
     public static void main (String[] args) {
+        Graph graph = new Graph();
+        InputStream jsonData= graph.getJsonData();
+        graph.parseJsonData(jsonData);
+    }
+
+    private void parseJsonData(InputStream jsonData) {
+        //TODO
+    }
+
+    private InputStream getJsonData() {
+        //TODO
+        return null;
+    }
+
+    private void doGraphStuff() {
         GraphDatabaseFactory graphDatabaseFactory = new GraphDatabaseFactory();
         GraphDatabaseService graphDb = graphDatabaseFactory.newEmbeddedDatabase("/Users/AndreasAbdi/Documents/Neo4j/default.graphdb");
 
