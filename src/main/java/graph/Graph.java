@@ -1,16 +1,12 @@
 package graph;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
-import org.neo4j.cypher.ExecutionEngine;
-import org.neo4j.cypher.ExecutionResult;
 import org.neo4j.graphdb.*;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Map;
 
 import static java.util.Collections.singletonMap;
@@ -49,7 +45,7 @@ public class Graph {
 
     private String getJsonData() throws IOException {
         ClassLoader classLoader = getClass().getClassLoader();
-        return IOUtils.toString(classLoader.getResourceAsStream("json.data"));
+        return IOUtils.toString(classLoader.getResourceAsStream("match.json"));
 
     }
 
@@ -57,7 +53,20 @@ public class Graph {
         File graphDbLocation = new File("/Users/AndreasAbdi/Documents/Neo4j/graph.graphdb");
         GraphDatabaseService graphDb = new GraphDatabaseFactory().newEmbeddedDatabase(graphDbLocation);
 
-        String query = "WITH {json} as data\n" +
+        String query = getNewDatabaseQuery();
+        graphDb.execute(query, singletonMap("json", jsonMap));
+        graphDb.shutdown();
+    }
+
+    private String getNewDatabaseQuery() {
+        return "WITH {json} as data\n" +
+               "UNWIND data.participantIdentities as p\n" +
+               "MERGE (player:Player {id:p.player.summonerId}) ON CREATE\n" +
+               "SET player.summonerName = p.player.summonerName";
+    }
+
+    private String getDatabaseQuery() {
+        return "WITH {json} as data\n" +
                 "UNWIND data.items as q\n" +
                 "MERGE (question:Question {id:q.question_id}) ON CREATE\n" +
                 "  SET question.title = q.title, question.share_link = q.share_link, question.favorite_count = q.favorite_count\n" +
@@ -71,8 +80,6 @@ public class Graph {
                 "   MERGE (answerer:User {id:a.owner.user_id}) ON CREATE SET answerer.display_name = a.owner.display_name\n" +
                 "   MERGE (answer)<-[:PROVIDED]-(answerer)\n" +
                 ")";
-        graphDb.execute(query, singletonMap("json", jsonMap));
-        graphDb.shutdown();
     }
 
     private void doGraphStuff() {
