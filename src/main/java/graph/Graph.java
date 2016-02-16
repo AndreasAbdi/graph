@@ -23,9 +23,9 @@ public class Graph {
 
 
     public static void main (String[] args) throws Exception {
-        Graph graph = new Graph();
-        String jsonData= graph.getJsonData();
-        graph.parseJsonData(jsonData);
+        //Graph graph = new Graph();
+        //String jsonData= graph.getJsonData();
+       // graph.parseJsonData(jsonData);
     }
 
     private void parseJsonData(String jsonData) throws IOException {
