@@ -1,5 +1,6 @@
 package inputProcessing;
 
+import gameData.ChampionData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -19,8 +20,19 @@ public class ActionsTest {
 
     @Before
     public void setup() {
-        testObject = new Actions();
+        ChampionData championData = new ChampionData();
+        championData.addChampion("=erk=");
+        championData.addChampion("giraffe");
+        testObject = new Actions(championData);
         championList = new ArrayList<>();
+    }
+
+    @Test
+    public void shouldNotRequireAnythingWhenUsingNullConstructor() {
+        testObject = new Actions();
+        assertFalse(testObject.isShouldDownloadDatabase());
+        assertFalse(testObject.isShouldLoadCounters());
+        assertFalse(testObject.isShouldResetDatabase());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -63,8 +75,9 @@ public class ActionsTest {
         testObject.loadCounters(championList);
         assertTrue(testObject.isShouldLoadCounters());
     }
+
     @Test
-    public void shouldReturnQueryRequiredWhenGivenValidListOfString() throws Exception {
+    public void shouldReturnQueryRequiredWhenGivenValidListOfString() {
         championList.add("zed");
         championList.add("AKALI");
         testObject.loadCounters(championList);

@@ -15,8 +15,12 @@ public class Actions {
     private boolean shouldLoadCounters;
 
     public Actions() {
-        championData = new ChampionData();
-        shouldLoadCounters = false;
+        this(new ChampionData());
+    }
+
+    public Actions(ChampionData championData) {
+        this.championData = championData;
+        shouldDownloadDatabase = false;
         shouldResetDatabase = false;
         shouldLoadCounters = false;
     }
