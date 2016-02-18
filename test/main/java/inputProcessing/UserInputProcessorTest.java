@@ -23,6 +23,7 @@ List of tests.
  */
     private UserInputProcessor testObject;
     private Reader input;
+
     @Before
     public void setup() {
         testObject = new UserInputProcessor();
@@ -30,23 +31,27 @@ List of tests.
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowErrorWhenNullInput() throws Exception {
-        input = null;
-        Optional<String> result = testObject.processInput(input);
-        assertFalse(result.isPresent());
+        testObject.processInput(null);
     }
 
     @Test
-    public void shouldReturnNullWhenGivenEmptyInput() {
+    public void shouldReturnUnsetActionsWhenGivenEmptyInput() {
         input = new StringReader("");
-        Optional<String> result = testObject.processInput(input);
-        assertFalse(result.isPresent());
+        Actions actions = testObject.processInput(input);
+        allActionStatusesAreInvalid(actions);
     }
 
     @Test
-    public void shouldReturnNothingWhenInvalidInput() {
+    public void shouldReturUnsetActionsWhenGivenInvalidInput() {
         input = new StringReader("hahahahahosdfsodfisodf");
-        Optional<String> result = testObject.processInput(input);
-        assertFalse(result.isPresent());
+        Actions actions = testObject.processInput(input);
+        allActionStatusesAreInvalid(actions);
+    }
+
+    public void allActionStatusesAreInvalid(Actions actions) {
+        assertFalse(actions.isShouldDownloadDatabase());
+        assertFalse(actions.isShouldResetDatabase());
+        assertFalse(actions.isShouldLoadCounters());
     }
 
 }

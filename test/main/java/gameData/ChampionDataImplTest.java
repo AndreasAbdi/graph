@@ -1,5 +1,6 @@
 package gameData;
 
+import gameData.impl.ChampionDataImpl;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,12 +13,12 @@ import static org.junit.Assert.assertTrue;
 /**
  * Created by AndreasAbdi on 2016-02-15.
  */
-public class ChampionDataTest {
-    ChampionData testObject;
+public class ChampionDataImplTest {
+    ChampionDataImpl testObject;
 
     @Before
     public void setup() {
-        testObject = new ChampionData();
+        testObject = new ChampionDataImpl();
     }
 
     @Test(expected = IllegalArgumentException.class)

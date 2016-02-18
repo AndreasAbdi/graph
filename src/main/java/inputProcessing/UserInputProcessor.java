@@ -7,7 +7,7 @@ import java.util.Optional;
  * Created by AndreasAbdi on 2016-02-15.
  */
 public class UserInputProcessor {
-    public Optional<String> processInput(Reader input) {
+    public Actions processInput(Reader input) {
         if (input == null) {
             throw new IllegalArgumentException();
         }
